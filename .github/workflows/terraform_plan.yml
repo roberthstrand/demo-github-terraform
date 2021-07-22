@@ -93,7 +93,7 @@ jobs:
     steps:
       - uses: actions/github-script@master
         env:
-          PLAN: "terraform\n${{ needs.terraform.outputs.plan_output }}"
+          PLAN: "terraform\n ${{ needs.terraform.outputs.plan_output }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
