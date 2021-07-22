@@ -23,15 +23,15 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run infracost diff
-        uses: infracost/infracost-gh-action@master
-        env:
-          INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          entrypoint: /scripts/ci/diff.sh # Do not change
-          path: .
-          usage_file: infracost-usage.yml
+      # - name: Run infracost diff
+      #   uses: infracost/infracost-gh-action@master
+      #   env:
+      #     INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     entrypoint: /scripts/ci/diff.sh # Do not change
+      #     path: .
+      #     usage_file: infracost-usage.yml
 
       - uses: hashicorp/setup-terraform@v1
         with:
