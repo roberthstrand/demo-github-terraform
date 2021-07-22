@@ -15,7 +15,6 @@ jobs:
   test_checks:
     name: Tests and checks
     runs-on: ubuntu-latest
-    environment: Production
 
     outputs:
       tfsec: ${{ steps.tfsec.outputs }}
