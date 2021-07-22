@@ -46,7 +46,7 @@ jobs:
     name: Terraform
 
     runs-on: ubuntu-latest
-    environment: Production
+    #environment: Production
 
     outputs:
       plan_output: ${{ steps.plan.outputs.stdout }}
