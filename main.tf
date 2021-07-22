@@ -24,7 +24,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "test" {
   name     = "test-deploy-rg"
-  location = "Norway East"
+  location = "West Europe"
 
   tags = {
     environment = "Production"

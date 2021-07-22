@@ -93,7 +93,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = `#### Terraform Security Scan: ✅ \`${{ needs.test_checks.outputs.tfsec }}\`
+            const output = `#### Terraform Security Scan: ✅
             #### Terraform Format: ✅ \`${{ needs.terraform.outputs.fmt }}\`
             #### Terraform Initialization: ✅ \`${{ needs.terraform.outputs.init }}\`
             #### Terraform Validation: ✅ ${{ needs.terraform.outputs.validate }}
