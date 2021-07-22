@@ -30,8 +30,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           entrypoint: /scripts/ci/diff.sh # Do not change
-          path: terraform
-          usage_file: infracost-usage.yml
+          # path: terraform
+          # usage_file: infracost-usage.yml
 
       - uses: hashicorp/setup-terraform@v1
         with:
