@@ -74,6 +74,7 @@ jobs:
 
   github:
     name: Update Pull Request
+    needs: [test_checks, terraform]
 
     runs-on: ubuntu-latest
     environment: Production
@@ -81,16 +82,16 @@ jobs:
     steps:
       - uses: actions/github-script@master
         env:
-          PLAN: "terraform\n${{ terraform.steps.plan.outputs.stdout }}"
+          PLAN: "terraform\n${{ jobs.terraform.steps.plan.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `#### Terraform Security Scan: ✅
-            #### Cost changed from ${{ test_checks.steps.infracost.outcome.past_total_monthly_cost }} to ${{ test_checks.steps.infracost.outcome.total_monthly_cost }}
-            #### Terraform Format: ✅ \`${{ terraform.steps.fmt.outcome }}\`
-            #### Terraform Initialization: ✅ \`${{ terraform.steps.init.outcome }}\`
-            #### Terraform Validation: ✅ ${{ terraform.steps.validate.outputs.stdout }}
-            #### Terraform Plan: 📖 \`${{ terraform.steps.plan.outcome }}\`
+            #### Cost changed from ${{ jobs.test_checks.steps.infracost.outcome.past_total_monthly_cost }} to ${{ test_checks.steps.infracost.outcome.total_monthly_cost }}
+            #### Terraform Format: ✅ \`${{ jobs.terraform.steps.fmt.outcome }}\`
+            #### Terraform Initialization: ✅ \`${{ jobs.terraform.steps.init.outcome }}\`
+            #### Terraform Validation: ✅ ${{ jobs.terraform.steps.validate.outputs.stdout }}
+            #### Terraform Plan: 📖 \`${{ jobs.terraform.steps.plan.outcome }}\`
 
             <details><summary>Show Plan</summary>
 
@@ -108,5 +109,5 @@ jobs:
             })
 
       - name: Terraform Plan Status
-        if: terraform.steps.plan.outcome == 'failure'
+        if: jobs.terraform.steps.plan.outcome == 'failure'
         run: exit 1
