@@ -24,6 +24,6 @@ resource "azurerm_resource_group" "test" {
 
   tags = {
     environment = "Production"
-    source = "Terraform"
+    source      = "Terraform"
   }
 }
