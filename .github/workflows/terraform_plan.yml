@@ -1,4 +1,4 @@
-name: Terraform Pull Request
+name: Terraform test and checks
 on:
   pull_request:
     branches:
@@ -93,8 +93,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = `#### Terraform Security Scan: ✅
-            #### Cost changed from \`${{ needs.test_checks.outputs.infracost_past }}\` to \`${{ needs.test_checks.outputs.infracost_current }}\`
+            const output = `#### Terraform Security Scan: ✅ \`${{ needs.test_checks.outputs.tfsec }}\`
             #### Terraform Format: ✅ \`${{ needs.terraform.outputs.fmt }}\`
             #### Terraform Initialization: ✅ \`${{ needs.terraform.outputs.init }}\`
             #### Terraform Validation: ✅ ${{ needs.terraform.outputs.validate }}
@@ -107,8 +106,6 @@ jobs:
             \`\`\`
 
             </details>
-
-            *Edit by: @${{ github.actor }}, Working Directory: \`${{ env.tf_actions_working_dir }}\`*`;
 
             github.issues.createComment({
               issue_number: context.issue.number,
