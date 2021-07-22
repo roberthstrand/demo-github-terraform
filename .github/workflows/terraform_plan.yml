@@ -16,6 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: Production
 
+    outputs:
+      tfsec: ${{ steps.tfsec.outputs }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@master
@@ -82,16 +85,16 @@ jobs:
     steps:
       - uses: actions/github-script@master
         env:
-          PLAN: "terraform\n${{ github.terraform.steps.plan.outputs.stdout }}"
+          PLAN: "terraform\n${{ needs.terraform.steps.plan.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `#### Terraform Security Scan: ✅
-            #### Cost changed from ${{ github.test_checks.steps.infracost.outcome.past_total_monthly_cost }} to ${{ test_checks.steps.infracost.outcome.total_monthly_cost }}
-            #### Terraform Format: ✅ \`${{ github.terraform.steps.fmt.outcome }}\`
-            #### Terraform Initialization: ✅ \`${{ github.terraform.steps.init.outcome }}\`
-            #### Terraform Validation: ✅ ${{ github.terraform.steps.validate.outputs.stdout }}
-            #### Terraform Plan: 📖 \`${{ github.terraform.steps.plan.outcome }}\`
+            #### Cost changed from ${{ needs.test_checks.steps.infracost.outcome.past_total_monthly_cost }} to ${{ test_checks.steps.infracost.outcome.total_monthly_cost }}
+            #### Terraform Format: ✅ \`${{ needs.terraform.steps.fmt.outcome }}\`
+            #### Terraform Initialization: ✅ \`${{ needs.terraform.steps.init.outcome }}\`
+            #### Terraform Validation: ✅ ${{ needs.terraform.steps.validate.outputs.stdout }}
+            #### Terraform Plan: 📖 \`${{ needs.terraform.steps.plan.outcome }}\`
 
             <details><summary>Show Plan</summary>
 
