@@ -101,7 +101,7 @@ jobs:
   tf_apply:
     name: Deploy, if approved
     needs: test_checks
-    if: ${{ github.event == push }}
+    if: github.event.pull_request.merged == 'true'
 
     runs-on: ubuntu-latest
     environment: Production
