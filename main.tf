@@ -20,5 +20,5 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "test" {
   name     = "test-deploy-rg"
-  location = "Norwegian East"
+  location = "Norway East"
 }
