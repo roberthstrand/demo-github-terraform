@@ -48,11 +48,11 @@ jobs:
     environment: Production
 
     outputs:
-      plan_output: steps.plan.outputs.stdout
-      plan_outcom: steps.plan.outcome
-      fmt: steps.fmt.outcome
-      init: steps.init.outcome
-      validate: steps.validate.outputs.stdout
+      plan_output: ${{steps.plan.outputs.stdout}}
+      plan_outcom: ${{steps.plan.outcome}}
+      fmt: ${{steps.fmt.outcome}}
+      init: ${{steps.init.outcome}}
+      validate: ${{steps.validate.outputs.stdout}}
 
     steps:
       - name: Checkout
