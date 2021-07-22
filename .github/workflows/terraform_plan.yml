@@ -17,9 +17,9 @@ jobs:
     environment: Production
 
     outputs:
-      tfsec: steps.tfsec.outputs
-      infracost_past: steps.infracost.outcome.past_total_monthly_cost
-      infracost_current: steps.infracost.outcome.total_monthly_cost
+      tfsec: ${{steps.tfsec.outputs}}
+      infracost_past: ${{steps.infracost.outcome.past_total_monthly_cost}}
+      infracost_current: ${{steps.infracost.outcome.total_monthly_cost}}
 
     steps:
       - name: Checkout
