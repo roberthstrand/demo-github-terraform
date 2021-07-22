@@ -88,13 +88,13 @@ jobs:
 
     steps:
       - uses: actions/github-script@master
-        env:
-          PLAN: "terraform\n ${{ needs.terraform.outputs.plan_output }}"
+        # env:
+        #   PLAN: "terraform\n ${{  }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `#### Terraform Security Scan: ✅
-            #### Cost changed from ${{ needs.test_checks.outputs.infracost_past }} to ${{ needs.test_checks.outputs.infracost_current }}
+            #### Cost changed from \`${{ needs.test_checks.outputs.infracost_past }}\` to \`${{ needs.test_checks.outputs.infracost_current }}\`
             #### Terraform Format: ✅ \`${{ needs.terraform.outputs.fmt }}\`
             #### Terraform Initialization: ✅ \`${{ needs.terraform.outputs.init }}\`
             #### Terraform Validation: ✅ ${{ needs.terraform.outputs.validate }}
@@ -102,7 +102,7 @@ jobs:
 
             <details><summary>Show Plan</summary>
 
-            \`\`\`${process.env.PLAN}\`\`\`
+            \`\`\`${needs.terraform.outputs.plan_output}\`\`\`
 
             </details>
 
