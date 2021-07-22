@@ -1,8 +1,6 @@
-name: Terraform Pull Request
+name: Terraform Deployment
 on:
-  pull_request:
-    paths:
-      - "**.tf"
+  - push
 
 env:
   ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
@@ -14,9 +12,7 @@ env:
 jobs:
   terraform:
     name: Terraform apply
-
     runs-on: ubuntu-latest
-    environment: Production
 
     steps:
       - uses: hashicorp/setup-terraform@v1
