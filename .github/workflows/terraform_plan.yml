@@ -46,7 +46,6 @@ jobs:
     name: Terraform
 
     runs-on: ubuntu-latest
-    #environment: Production
 
     outputs:
       plan_output: ${{ steps.plan.outputs.stdout }}
@@ -88,7 +87,6 @@ jobs:
     needs: [test_checks, terraform]
 
     runs-on: ubuntu-latest
-    environment: Production
 
     steps:
       - uses: actions/github-script@master
