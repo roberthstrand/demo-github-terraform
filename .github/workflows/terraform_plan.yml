@@ -102,7 +102,7 @@ jobs:
 
             <details><summary>Show Plan</summary>
 
-            \`\`\`${needs.terraform.outputs.plan_output}\`\`\`
+            \`\`\`${{ needs.terraform.outputs.plan_output }}\`\`\`
 
             </details>
 
