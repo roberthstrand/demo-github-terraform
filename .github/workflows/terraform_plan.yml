@@ -88,8 +88,8 @@ jobs:
 
     steps:
       - uses: actions/github-script@master
-        # env:
-        #   PLAN: "terraform\n ${{  }}"
+        env:
+          PLAN: "terraform\n ${{ needs.terraform.outputs.plan_output }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -103,7 +103,7 @@ jobs:
             <details><summary>Show Plan</summary>
 
             \`\`\`
-            ${{ needs.terraform.outputs.plan_output }}
+            ${ process.env.PLAN }
             \`\`\`
 
             </details>

@@ -9,7 +9,7 @@ module "kubernetes" {
 
   default_node_pool = {
     name                = "default"
-    vm_size             = "Standard_B1s"
+    vm_size             = "Standard_D2s_v3"
     node_count          = 1
     enable_auto_scaling = false
     min_count           = null
