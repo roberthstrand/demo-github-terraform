@@ -1,4 +1,4 @@
-name: Terraform Plan
+name: Terraform Pull Request
 on:
   - pull_request
 
@@ -6,6 +6,7 @@ jobs:
   terraform:
     name: Terraform
     runs-on: ubuntu-latest
+    environment: Production
 
     env:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
@@ -24,16 +25,17 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run infracost diff
+        id: infracost
         uses: infracost/infracost-gh-action@master
         env:
           INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           entrypoint: /scripts/ci/diff.sh # Do not change
-          path: terraform
+          path: .
           usage_file: infracost-usage.yml
 
-      - uses: hashicorp/setup-terraform@master
+      - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: latest
 
@@ -49,26 +51,27 @@ jobs:
         id: validate
         run: terraform validate -no-color
         env:
-          TF_VAR_github_token: ${{ secrets.GH_TOKEN }}
+          TF_VAR_github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color
+        run: terraform plan
         continue-on-error: true
         env:
-          TF_VAR_github_token: ${{ secrets.GH_TOKEN }}
+          TF_VAR_github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/github-script@master
         env:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
         with:
-          github-token: ${{ secrets.GH_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const output = `#### Terraform Security Scan ☠ \`Success! The configuration is secure.\`
-            #### Terraform Format and Style 🖌 \`${{ steps.fmt.outcome }}\`
-            #### Terraform Initialization ⚙️ \`${{ steps.init.outcome }}\`
-            #### Terraform Validation 🤖 ${{ steps.validate.outputs.stdout }}
-            #### Terraform Plan 📖 \`${{ steps.plan.outcome }}\`
+            const output = `#### Terraform Security Scan: ✅
+            #### Cost changed from ${{ steps.infracost.outcome.past_total_monthly_cost }} to ${{ steps.infracost.outcome.total_monthly_cost }}
+            #### Terraform Format: ✅ \`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization: ✅ \`${{ steps.init.outcome }}\`
+            #### Terraform Validation: ✅ ${{ steps.validate.outputs.stdout }}
+            #### Terraform Plan: 📖 \`${{ steps.plan.outcome }}\`
 
             <details><summary>Show Plan</summary>
 
