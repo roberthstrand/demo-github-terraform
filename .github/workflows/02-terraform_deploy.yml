@@ -11,11 +11,10 @@ jobs:
     environment: Production
 
     env:
-      ARM_CLIENT_ID: ${{ secrets.CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.GH_TERRAFORM_PRD }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.SUB_ID }}
-      ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
-      ARM_ACCESS_KEY: ${{ secrets.GH_TERRAFORM_PRD_STATE_BLOB_KEY }}
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}@
 
     steps:
       - name: Checkout
