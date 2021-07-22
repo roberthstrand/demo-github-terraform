@@ -1,0 +1,36 @@
+name: Terraform Deployment
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    environment: Production
+
+    env:
+      ARM_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.GH_TERRAFORM_PRD }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.SUB_ID }}
+      ARM_TENANT_ID: ${{ secrets.TENANT_ID }}
+      ARM_ACCESS_KEY: ${{ secrets.GH_TERRAFORM_PRD_STATE_BLOB_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - uses: hashicorp/setup-terraform@master
+        with:
+          terraform_version: 1.0.3
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve -input=false
+        env:
+          TF_VAR_github_token: ${{ secrets.GITHUB_TOKEN }}
