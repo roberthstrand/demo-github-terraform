@@ -1,6 +1,10 @@
 name: Terraform Deployment
 on:
-  - push
+  push:
+    branches:
+      - main
+    paths:
+      - "**.tf"
 
 env:
   ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
@@ -8,6 +12,7 @@ env:
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
   TF_VERSION: ${{ github.event.env.TF_VERSION }}
+  tf_actions_working_dir: ${{ github.event.env.tf_actions_working_dir }}
 
 jobs:
   terraform:
