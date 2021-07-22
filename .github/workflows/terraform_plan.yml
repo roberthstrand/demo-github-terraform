@@ -90,7 +90,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `#### Terraform Security Scan: ✅
-            #### Cost changed from ${{ needs.test_checks.steps.infracost.outcome.past_total_monthly_cost }} to ${{ test_checks.steps.infracost.outcome.total_monthly_cost }}
+            #### Cost changed from ${{ needs.test_checks.steps.infracost.outcome.past_total_monthly_cost }} to ${{ needs.test_checks.steps.infracost.outcome.total_monthly_cost }}
             #### Terraform Format: ✅ \`${{ needs.terraform.steps.fmt.outcome }}\`
             #### Terraform Initialization: ✅ \`${{ needs.terraform.steps.init.outcome }}\`
             #### Terraform Validation: ✅ ${{ needs.terraform.steps.validate.outputs.stdout }}
