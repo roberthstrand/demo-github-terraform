@@ -33,7 +33,7 @@ jobs:
           path: terraform
           usage_file: infracost-usage.yml
 
-      - uses: hashicorp/setup-terraform@master
+      - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: latest
 
