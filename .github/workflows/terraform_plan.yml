@@ -2,7 +2,6 @@ name: Terraform Pull Request
 on:
   - pull_request
 
-# Set environment variables used for all jobs
 env:
   ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
   ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
@@ -43,7 +42,6 @@ jobs:
           usage_file: infracost-usage.yml
   terraform:
     name: Terraform
-
     runs-on: ubuntu-latest
 
     outputs:
@@ -80,7 +78,6 @@ jobs:
         id: plan
         run: terraform plan -no-color
         continue-on-error: true
-
   github:
     name: Update Pull Request
     needs: [test_checks, terraform]
