@@ -1,6 +1,10 @@
 name: Terraform Deployment
 on:
-  - push
+  push:
+    branches:
+      - main
+    paths:
+      - "**.tf"
 
 env:
   ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
