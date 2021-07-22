@@ -22,8 +22,8 @@ resource "azurerm_resource_group" "test" {
   name     = "test-deploy-rg"
   location = "Norway East"
 
-  tags = {
-    "environment" = "Production"
-    "source" = "Terraform"
+  tags {
+    environment = "Production"
+    source = "Terraform"
   }
 }
