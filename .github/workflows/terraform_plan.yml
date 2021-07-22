@@ -9,6 +9,7 @@ env:
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
   TF_VERSION: 1.0.3
+  tf_actions_working_dir: .
 
 jobs:
   test_checks:
@@ -48,7 +49,7 @@ jobs:
     environment: Production
 
     outputs:
-      plan_output: ${{steps.plan.outputs.stdout}}
+      plan_output: ${{ steps.plan.outputs.stdout }}
       plan_outcom: ${{steps.plan.outcome}}
       fmt: ${{steps.fmt.outcome}}
       init: ${{steps.init.outcome}}
@@ -94,7 +95,7 @@ jobs:
     steps:
       - uses: actions/github-script@master
         env:
-          PLAN: "terraform\n${{ needs.terraform.outputs.plan_outputs }}"
+          PLAN: "terraform\n${{ needs.terraform.outputs.plan_output }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -103,7 +104,7 @@ jobs:
             #### Terraform Format: ✅ \`${{ needs.terraform.outputs.fmt }}\`
             #### Terraform Initialization: ✅ \`${{ needs.terraform.outputs.init }}\`
             #### Terraform Validation: ✅ ${{ needs.terraform.outputs.validate }}
-            #### Terraform Plan: 📖 \`${{ needs.terraform.outputs.plan_outcome }}\`
+            #### Terraform Plan: 📖 \`${{ needs.terraform.outputs.plan_outcom }}\`
 
             <details><summary>Show Plan</summary>
 
