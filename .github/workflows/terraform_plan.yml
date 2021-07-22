@@ -1,22 +1,24 @@
 name: Terraform Pull Request
 on:
-  pull_request:
-    paths:
-    - '**.tf'
+  - pull_request
 
-# Set environment variables used for all jobs
 env:
   ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
   ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
   TF_VERSION: 1.0.3
+  tf_actions_working_dir: .
 
 jobs:
   test_checks:
     name: Tests and checks
     runs-on: ubuntu-latest
-    environment: Production
+
+    outputs:
+      tfsec: ${{ steps.tfsec.outputs }}
+      infracost_past: ${{ steps.infracost.outcome.past_total_monthly_cost }}
+      infracost_current: ${{ steps.infracost.outcome.total_monthly_cost }}
 
     steps:
       - name: Checkout
@@ -38,6 +40,20 @@ jobs:
           entrypoint: /scripts/ci/diff.sh # Do not change
           path: .
           usage_file: infracost-usage.yml
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+
+    outputs:
+      plan_output: ${{ steps.plan.outputs.stdout }}
+      plan_outcom: ${{ steps.plan.outcome }}
+      fmt: ${{ steps.fmt.outcome }}
+      init: ${{ steps.init.outcome }}
+      validate: ${{ steps.validate.outputs.stdout }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
 
       # Setup Terraform and run fmt, init and validation
       - uses: hashicorp/setup-terraform@v1
@@ -58,26 +74,29 @@ jobs:
         env:
           TF_VAR_github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Run terraform plan, and add comment to the PR with the results
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color
         continue-on-error: true
-        env:
-          TF_VAR_github_token: ${{ secrets.GITHUB_TOKEN }}
+  github:
+    name: Update Pull Request
+    needs: [test_checks, terraform]
 
+    runs-on: ubuntu-latest
+
+    steps:
       - uses: actions/github-script@master
         env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+          PLAN: "terraform\n ${{ needs.terraform.outputs.plan_output }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `#### Terraform Security Scan: ✅
-            #### Cost changed from ${{ steps.infracost.outcome.past_total_monthly_cost }} to ${{ steps.infracost.outcome.total_monthly_cost }}
-            #### Terraform Format: ✅ \`${{ steps.fmt.outcome }}\`
-            #### Terraform Initialization: ✅ \`${{ steps.init.outcome }}\`
-            #### Terraform Validation: ✅ ${{ steps.validate.outputs.stdout }}
-            #### Terraform Plan: 📖 \`${{ steps.plan.outcome }}\`
+            #### Cost changed from ${{ needs.test_checks.outputs.infracost_past }} to ${{ needs.test_checks.outputs.infracost_current }}
+            #### Terraform Format: ✅ \`${{ needs.terraform.outputs.fmt }}\`
+            #### Terraform Initialization: ✅ \`${{ needs.terraform.outputs.init }}\`
+            #### Terraform Validation: ✅ ${{ needs.terraform.outputs.validate }}
+            #### Terraform Plan: 📖 \`${{ needs.terraform.outputs.plan_outcom }}\`
 
             <details><summary>Show Plan</summary>
 
@@ -85,7 +104,7 @@ jobs:
 
             </details>
 
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+            *Edit by: @${{ github.actor }}, Working Directory: \`${{ env.tf_actions_working_dir }}\`*`;
 
             github.issues.createComment({
               issue_number: context.issue.number,
@@ -95,28 +114,5 @@ jobs:
             })
 
       - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
+        if: github.terraform.steps.plan.outcome == 'failure'
         run: exit 1
-
-  tf_apply:
-    name: Deploy, if approved
-    needs: test_checks
-    if: github.event.pull_request.merged == 'true'
-
-    runs-on: ubuntu-latest
-    environment: Production
-
-    steps:
-    - uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: ${{ env.TF_VERSION }}
-
-    - name: Terraform Init
-      id: init
-      run: terraform init
-
-    - name: Terraform Apply
-      id: apply
-      run: terraform apply -auto-approve -input=false
-      env:
-        TF_VAR_github_token: ${{ secrets.GITHUB_TOKEN }}
